@@ -4,7 +4,7 @@ proof-of-concept evaluating tenant-specific policies using the tyk oss api gatew
 
 ## run the poc
 
-1. run all required services via `docker compose up``
+1. run all required services via `docker compose up`
 2. execute the http requests in `requests.http` repeatedly 
 3. observe `goggle` token having a 0,167rps (10req/60sec) rate limit
 4. observe `appel` token having a 1,67rps (100req/60sec) rate limit
