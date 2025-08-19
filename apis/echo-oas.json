@@ -1,0 +1,112 @@
+{
+  "components": {
+    "schemas": {
+      "Echo": {
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "message"
+        ],
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "jwt_auth": {
+        "bearerFormat": "JWT",
+        "scheme": "bearer",
+        "type": "http"
+      }
+    }
+  },
+  "info": {
+    "title": "Echo | v1",
+    "version": "1.0.0"
+  },
+  "openapi": "3.0.1",
+  "paths": {
+    "/{input}": {
+      "get": {
+        "operationId": "Echo",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "input",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Echo"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "Echo"
+        ]
+      }
+    }
+  },
+  "security": [
+    {
+      "jwt_auth": []
+    }
+  ],
+  "servers": [
+    {
+      "url": "http://127.0.0.1:8080/echo"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Echo"
+    }
+  ],
+  "x-tyk-api-gateway": {
+    "info": {
+      "id": "echo",
+      "name": "echo",
+      "state": {
+        "active": true
+      }
+    },
+    "upstream": {
+      "url": "http://echo:8080"
+    },
+    "server": {
+      "listenPath": {
+        "value": "/echo",
+        "strip": true
+      },
+      "authentication": {
+        "enabled": true,
+        "baseIdentityProvider": "jwt_claim",
+        "securitySchemes": {
+          "jwt_auth": {
+            "enabled": true,
+            "header": {
+              "enabled": true,
+              "name": "Authorization"
+            },
+            "source": "http://keycloak:8080/realms/evil-corp/protocol/openid-connect/certs",
+            "signingMethod": "rsa",
+            "identityBaseField": "tenantId",
+            "skipKid": true,
+            "policyFieldName": "tenantId"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,30 @@
+@goggle_client_id = goggle-app
+@goggle_client_secret = nWxF5A0vQ8Rc8NjOwuu1yw9Glk9GDupz
+@appel_client_id = appel-app
+@appel_client_secret = 14DSfE0F38eievGBGPhFuTKKZNZZUXzd
+
+### acquire a token for goggle app
+# @name acquire_goggle_token
+POST http://localhost:8080/realms/evil-corp/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=client_credentials
+&client_id={{goggle_client_id}}
+&client_secret={{goggle_client_secret}}
+
+### call upstream with goggle token
+GET http://localhost:5000/echo/hi
+Authorization: Bearer {{acquire_goggle_token.response.body.$.access_token}}
+
+### aAcquire a token for appel app
+# @name acquire_appel_token
+POST http://localhost:8080/realms/evil-corp/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=client_credentials
+&client_id={{appel_client_id}}
+&client_secret={{appel_client_secret}}
+
+### call upstream with appel token
+GET http://localhost:5000/echo/hi
+Authorization: Bearer {{acquire_appel_token.response.body.$.access_token}}

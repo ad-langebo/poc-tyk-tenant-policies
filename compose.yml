@@ -1,0 +1,77 @@
+services:
+    postgres:
+        image: postgres:17.0-bookworm
+        environment:
+            POSTGRES_DB: postgres
+            POSTGRES_USER: ${POSTGRES_USER}
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+        ports:
+            - 5432:5432
+        healthcheck:
+            test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER}" ]
+            interval: 2s
+            retries: 5
+        volumes:
+            - postgres:/var/lib/postgresql/data
+
+    redis:
+        image: redis:latest
+        ports:
+            - 6379:6379
+        healthcheck:
+            test: [ "CMD", "redis-cli", "ping" ]
+            interval: 10s
+            retries: 5
+        volumes:
+            - redis:/data
+
+    keycloak:
+        image: keycloak/keycloak:26.0
+        environment:
+            KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN:-admin}
+            KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+            KC_DB: postgres
+            KC_DB_URL: jdbc:postgresql://postgres:5432/postgres
+            KC_DB_USERNAME: ${POSTGRES_USER}
+            KC_DB_PASSWORD: ${POSTGRES_PASSWORD}
+        ports:
+            - 8080:8080
+        depends_on:
+            postgres:
+                condition: service_healthy
+        command: start-dev
+        volumes:
+            - keycloak:/opt/keycloak/data/
+
+    tyk-gateway:
+        image: tykio/tyk-gateway:v5.8.5
+        ports:
+            - 5000:5000
+        environment:
+            TYK_GW_SECRET: jVvLZlnHriDzigoHR7j
+            TYK_GW_LISTENPORT: 5000
+            TYK_GW_STORAGE_TYPE: redis
+            TYK_GW_STORAGE_HOST: redis
+            TYK_GW_STORAGE_PORT: 6379
+            # telemetry
+            TYK_GW_LOGLEVEL: debug
+            TYK_GW_POLICIES_POLICYSOURCE: file
+            TYK_GW_POLICIES_POLICYPATH: /opt/tyk-gateway/policies/
+            TYK_GW_POLICIES_ALLOWEXPLICITPOLICYID: true
+        depends_on:
+            - redis
+        volumes:
+            - ./apis:/opt/tyk-gateway/apps
+            - ./policies:/opt/tyk-gateway/policies
+
+    echo:
+        build:
+          context: src
+          dockerfile: Dockerfile
+        ports:
+            - 8080
+
+volumes:
+    keycloak:
+    redis:
+    postgres:

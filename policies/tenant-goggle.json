@@ -1,0 +1,25 @@
+{
+  "id": "goggle",
+  "name": "goggle",
+  "auth_type": "jwt",
+  "rate": 10,
+  "per": 60,
+  "quota_max": 10,
+  "quota_renewal_rate": 60,
+  "access_rights": {
+    "echo": {
+      "api_name": "echo",
+      "api_id": "echo",
+      "versions": [
+        "default"
+      ],
+      "allowed_urls": []
+    }
+  },
+  "active": true,
+  "tags": [
+    "default",
+    "jwt"
+  ],
+  "key_expires_in": 86400
+}

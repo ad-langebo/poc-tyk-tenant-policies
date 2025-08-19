@@ -1,0 +1,108 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Echo | v1",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/{input}": {
+      "get": {
+        "tags": [
+          "Echo"
+        ],
+        "operationId": "Echo",
+        "parameters": [
+          {
+            "name": "input",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Echo"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Echo": {
+        "required": [
+          "message"
+        ],
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "jwt_auth": {
+        "bearerFormat": "JWT",
+        "scheme": "bearer",
+        "type": "http"
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Echo"
+    }
+  ],
+  "security": [
+    {
+      "jwt_auth": []
+    }
+  ],
+  "x-tyk-api-gateway": {
+    "info": {
+      "id": "echo",
+      "name": "echo",
+      "state": {
+        "active": true
+      }
+    },
+    "upstream": {
+      "url": "http://echo:8080"
+    },
+    "server": {
+      "listenPath": {
+        "value": "/echo",
+        "strip": true
+      },
+      "authentication": {
+        "enabled": true,
+        "securitySchemes": {
+          "jwt_auth": {
+            "defaultPolicies": [
+              "default-policy"
+            ],
+            "enabled": true,
+            "header": {
+              "enabled": true,
+              "name": "Authorization"
+            },
+            "identityBaseField": "sub",
+            "policyFieldName": "tenantId",
+            "signingMethod": "rsa",
+            "source": "http://keycloak:8080/realms/evil-corp/protocol/openid-connect/certs"
+          }
+        }
+      }
+    }
+  }
+}
