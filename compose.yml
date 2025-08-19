@@ -39,9 +39,9 @@ services:
         depends_on:
             postgres:
                 condition: service_healthy
-        command: start-dev
+        command: start-dev --import-realm
         volumes:
-            - keycloak:/opt/keycloak/data/
+            - ./realms:/opt/keycloak/data/import
 
     tyk-gateway:
         image: tykio/tyk-gateway:v5.8.5
@@ -54,7 +54,7 @@ services:
             TYK_GW_STORAGE_HOST: redis
             TYK_GW_STORAGE_PORT: 6379
             # telemetry
-            TYK_GW_LOGLEVEL: debug
+            TYK_GW_LOGLEVEL: info
             TYK_GW_POLICIES_POLICYSOURCE: file
             TYK_GW_POLICIES_POLICYPATH: /opt/tyk-gateway/policies/
             TYK_GW_POLICIES_ALLOWEXPLICITPOLICYID: true
@@ -72,6 +72,5 @@ services:
             - 8080
 
 volumes:
-    keycloak:
     redis:
     postgres:
