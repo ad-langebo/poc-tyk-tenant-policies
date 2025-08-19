@@ -11,7 +11,7 @@ grant_type=client_credentials
 GET http://localhost:5000/echo/hi
 Authorization: Bearer {{acquire_goggle_token.response.body.$.access_token}}
 
-### aAcquire a token for appel app
+### acquire a token for appel app
 # @name acquire_appel_token
 POST http://localhost:8080/realms/evil-corp/protocol/openid-connect/token
 Content-Type: application/x-www-form-urlencoded
